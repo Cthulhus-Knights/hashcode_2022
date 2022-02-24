@@ -1,3 +1,10 @@
 'use strict'
 
-module.exports = csv => {}
+function getContributors (otherRows, contributorsNumber) {
+  return {
+    contributors: {}, 
+    projectLines: {}
+  }
+}
+
+module.exports = getContributors

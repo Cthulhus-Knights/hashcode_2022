@@ -4,6 +4,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const { get, set } = require('lodash')
 
+const fileParser = require('./src/fileParser')
 const getContributors = require('./src/getContributors')
 const getProjects = require('./src/getProjects')
 
@@ -18,13 +19,19 @@ const files = [
 
 function parseFile(fileName) {
   const { rows } = fileParser(
-    path.join(__dirname, `./fixtures/${fileName}.in`),
+    path.join(__dirname, `./input_data/${fileName}`),
     { splitInRows: true }
   )
-  const [header, otherRows] = rows
-  const [contributorsNumber, projectNumber] = header.split(" ").map(value => Number(value))
+
+  console.log('otherRows', rows)
+
+  const [header, ...otherRows] = rows
+  const [contributorsNumber, projectsNumber] = header.split(" ").map(Number)
+
+  console.log('otherRows', otherRows)
+  console.log('contributorsNumber', contributorsNumber)
   const { contributors, projectLines } = getContributors(otherRows, contributorsNumber)
-  const { projects } = getProjects(projectLines, projectNumber)
+  // const { projects } = getProjects(projectLines, projectsNumber)
   return {}
 }
 
@@ -36,7 +43,7 @@ const start = () => {
     // put your core logic here
 
     // save data
-    fs.outputFileSync(`./out/${fileName}.out`, rowsList.join('\n'), { encoding: 'utf-8' })
+    // fs.outputFileSync(`./out/${fileName}.out`, rowsList.join('\n'), { encoding: 'utf-8' })
   })
 }
 
