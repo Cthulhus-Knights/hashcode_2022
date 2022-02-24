@@ -18,16 +18,17 @@ function levelUpContributors(
       const usedSkill = peopleAssignedWithSkill[contributor]
       console.log('project', project)
       const skillLevelRequiredByProject = project.skills.find(skill => {
+        console.log('skill', skill, usedSkill)
         return skill.name === usedSkill
-      }).value
+      }).level
       const skillLevelOfContributor = contributors[contributor][usedSkill]
       console.log('skillLevelRequiredByProject', skillLevelRequiredByProject)
       console.log('skillLevelOfContributor', skillLevelOfContributor)
-      if (skillLevelRequiredByProject >= skillLevelOfContributor) {
+      if (skillLevelOfContributor <= skillLevelRequiredByProject) {
+        console.log('level upped contributors', contributors)
         contributors[contributor][usedSkill] += 1
       }
     })
-    
 }
 
 function allocateContributorsInProjects(contributors, projects, skills) {
@@ -66,7 +67,7 @@ function allocateContributorsInProjects(contributors, projects, skills) {
       peopleAssignedWithSkill
     }
     levelUpContributors(result, project, contributors)
-    
+    console.log('contributors', contributors)
 
     return result
   })
