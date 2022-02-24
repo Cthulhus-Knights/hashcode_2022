@@ -24,7 +24,7 @@ function getProjects(projectsCsv, projectsNumber) {
       })
     }
   }
-  if (projects.length !== projectsNumber) {
+  if (Object.keys(projects).length !== projectsNumber) {
     throw new Error('projects.length !== projectsNumber')
   }
   return projects
@@ -41,6 +41,6 @@ const testList = [
   'HTML 3',
 ]
 
-console.log(JSON.stringify(getProjects(testList, 3), null, 2))
+// console.log(JSON.stringify(getProjects(testList, 3), null, 2))
 
 module.exports = { getProjects }
