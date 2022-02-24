@@ -5,7 +5,7 @@ const fs = require('fs-extra')
 const { get, set } = require('lodash')
 
 const fileParser = require('./src/fileParser')
-const { getContributors } = require('./src/getContributors')
+const { getContributors, getSkillsFromContributors } = require('./src/getContributors')
 const { getProjects } = require('./src/getProjects')
 const {
   allocateProjectsInRoadmap,
@@ -40,7 +40,8 @@ function parseFile(fileName) {
   console.log('contributorsNumber', contributorsNumber)
   const { contributors, projectLines } = getContributors(otherRows, contributorsNumber)
   const { projects } = getProjects(projectLines, projectsNumber)
-  const result = core(projects, contributors)
+  const skills = getSkillsFromContributors(contributors)
+  const result = core(projects, contributors, skills)
   return {}
 }
 

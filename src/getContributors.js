@@ -23,6 +23,33 @@ function getContributors(otherRows, contributorsNumber) {
   }
 }
 
+function getSkillsFromContributors(contributors) {
+  const skills = {}
+  Object.keys(contributors).forEach(contributorName => {
+    const contributor = contributors[contributorName]
+    Object.keys(contributor).forEach(skillName => {
+      if (!skills[skillName]) {
+        skills[skillName] = []
+      }
+      skills[skillName].push(contributorName)
+    })
+  })
+  return skills
+}
+
+const testContributors = {
+  Anna: {
+    'C++': 2,
+  },
+  Bob: {
+    HTML: 5,
+    CSS: 5,
+  },
+  Maria: {
+    Python: 1
+  }
+}
+
 const testList = [
   'Anna 1',
   'C++ 2',
@@ -41,6 +68,10 @@ const testList = [
   'HTML 3',
 ]
 
-console.log(JSON.stringify(getContributors(testList, 3)))
+// console.log(JSON.stringify(getContributors(testList, 3)))
+// console.log(JSON.stringify(getSkillsFromContributors(testContributors)))
 
-module.exports = { getContributors }
+module.exports = {
+  getContributors,
+  getSkillsFromContributors,
+}
