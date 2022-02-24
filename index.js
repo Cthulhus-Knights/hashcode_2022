@@ -4,14 +4,16 @@ const path = require('path')
 const fs = require('fs-extra')
 const { get, set } = require('lodash')
 
+const getContributors = require('./src/getContributors')
+const getProjects = require('./src/getProjects')
+
 const files = [
-  // 'a',
-  // 'b',
-  // 'c',
-  // 'd',
-  // 'e',
-  // 'f'
-  // 'test'
+  'a_an_example.in.txt',
+  // 'b_better_start_small.in.txt',
+  // 'c_collaboration.in.txt',
+  // 'd_dense_schedule.in.txt',
+  // 'e_exceptional_skills.in.txt',
+  // 'f_find_great_mentors.in.txt'
 ]
 
 function parseFile(fileName) {
@@ -19,7 +21,10 @@ function parseFile(fileName) {
     path.join(__dirname, `./fixtures/${fileName}.in`),
     { splitInRows: true }
   )
-  const [] = rows
+  const [header, otherRows] = rows
+  const [contributorsNumber, projectNumber] = header.split(" ").map(value => Number(value))
+  const { contributors, projectLines } = getContributors(otherRows, contributorsNumber)
+  const projects = getProjects(projectLines, projectNumber)
   return {}
 }
 
