@@ -1,42 +1,74 @@
 'use strict'
 
 function allocateProjectsInRoadmap(projects) {
-  return projects
+  return Object.entries(projects)
+  .map(([projectName, project]) => { return { projectName, project } })
+  .sort((a, b) => b.project.bestBefore - a.project.bestBefore)
+}
+
+function levelUpContributors(
+  { projectName, peopleAssignedWithSkill },
+  project,
+  contributors
+) {
+    /*
+    Anna: { 'C++': 5 }
+    */
+    Object.keys(peopleAssignedWithSkill).forEach(contributor => {
+      const usedSkill = peopleAssignedWithSkill[contributor]
+      console.log('project', project)
+      const skillLevelRequiredByProject = project.skills.find(skill => {
+        return skill.name === usedSkill
+      }).value
+      const skillLevelOfContributor = contributors[contributor][usedSkill]
+      console.log('skillLevelRequiredByProject', skillLevelRequiredByProject)
+      console.log('skillLevelOfContributor', skillLevelOfContributor)
+      if (skillLevelRequiredByProject >= skillLevelOfContributor) {
+        contributors[contributor][usedSkill] += 1
+      }
+    })
+    
 }
 
 function allocateContributorsInProjects(contributors, projects, skills) {
-  let counterProjectAllocated = 0
-  
-  return Object.entries(projects).map(([projectName, project]) => {
-    const {skills: projectSkills} = project
+  return projects.map(({ projectName, project }) => {
+    const { skills: projectSkills } = project
     // console.log('projectSkills', projectSkills)
     // console.log('skills', skills)
 
-    
-    const peopleAssigned = projectSkills.reduce((acc, {name, level}) => {
+    const { peopleAssigned, peopleAssignedWithSkill } = projectSkills.reduce((acc, { name, level }) => {
       const contributorsWithSkill = skills[name]
       // console.log('contributorsWithSkill', contributorsWithSkill)
       const findContributorByLevel = contributorsWithSkill.find(c => {
         return contributors[c][name] >= level
       })
       // console.log('findContributorByLevel', findContributorByLevel)
-      if (findContributorByLevel && !acc.includes(findContributorByLevel)) {
-        acc.push(findContributorByLevel)
+      if (findContributorByLevel && !acc.peopleAssigned.includes(findContributorByLevel)) {
+        acc.peopleAssigned.push(findContributorByLevel)
+        console.log('findContributorByLevel', findContributorByLevel)
+        acc.peopleAssignedWithSkill[findContributorByLevel] = name
       }
       return acc
-    }, []).filter(item => item)
+    }, { peopleAssigned: [], peopleAssignedWithSkill: {} })
 
     if (peopleAssigned.length < project.skillsNumber) {
       return {
         projectName,
-        peopleAssigned: []
+        peopleAssigned: [],
+        peopleAssignedWithSkill: {},
       }
     }
-    
-    return {
+
+
+    const result = {
       projectName,
-      peopleAssigned
+      peopleAssigned: peopleAssigned.filter(item => item),
+      peopleAssignedWithSkill
     }
+    levelUpContributors(result, project, contributors)
+    
+
+    return result
   })
 }
 
@@ -48,18 +80,21 @@ function allocateContributorsInProjects(contributors, projects, skills) {
 // WebChat
 // Maria Bob
 
-function findSkillNeeded (contributors, skillName, skillLevel) {
-  
-  // return person
-  return 
-} 
-
 function core(projects, contributors, skills) {
   const orderedProjects = allocateProjectsInRoadmap(projects)
   const contributorsInProjects = allocateContributorsInProjects(contributors, orderedProjects, skills)
-  const filteredContributorsInProjects = contributorsInProjects.filter(({ peopleAssigned }) => {
-    return peopleAssigned.length > 0
-  })
+  console.log('contributorsInProjects', contributorsInProjects)
+  const filteredContributorsInProjects = contributorsInProjects.filter(({ peopleAssigned }) => peopleAssigned.length > 0)
+
+  console.log('filteredContributorsInProjects', filteredContributorsInProjects)
+  // filteredContributorsInProjects.map(projectEnded => {
+  //   const { peopleAssignedWithSkill, projectName} = projectEnded
+  //   levelUpContributors({projectName, peopleAssignedWithSkill}, projectEnded, contributors)
+  // })
+
+  // const temporaryDiscardedProject = contributorsInProjects.filter(peopleAssigned.length === 0)
+  // console.log('temporaryDiscardedProject', temporaryDiscardedProject)
+
   // console.log('contributorsInProjects', filteredContributorsInProjects)
   return filteredContributorsInProjects
 }
