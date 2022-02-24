@@ -6,7 +6,7 @@ const { get, set } = require('lodash')
 
 const fileParser = require('./src/fileParser')
 const getContributors = require('./src/getContributors')
-const getProjects = require('./src/getProjects')
+const { getProjects } = require('./src/getProjects')
 
 const files = [
   'a_an_example.in.txt',
@@ -26,8 +26,10 @@ function parseFile(fileName) {
   console.log('otherRows', rows)
 
   const [header, ...otherRows] = rows
-  const [contributorsNumber, projectsNumber] = header.split(" ").map(Number)
+  const [contributorsStringNumber, projectsStringNumber] = header.split(" ").map(Number)
 
+  const contributorsNumber = +contributorsStringNumber
+  const projectsNumber = +projectsStringNumber
   console.log('otherRows', otherRows)
   console.log('contributorsNumber', contributorsNumber)
   const { contributors, projectLines } = getContributors(otherRows, contributorsNumber)
