@@ -8,7 +8,6 @@ function allocateProjectsInRoadmap(projects) {
   .sort((a, b) => a.project.days - b.project.days)
   .sort((a, b) => b.project.skillsNumber - a.project.skillsNumber)
 
-  // console.log('aaa', aaa)
   return aaa
 }
 
@@ -38,7 +37,8 @@ function levelUpContributors(
 }
 
 function allocateContributorsInProjects(contributors, projects, skills) {
-  return projects.map(({ projectName, project }) => {
+  const notExecutedProjects = []
+  const allocateContributorsInProjectsResult = projects.map(({ projectName, project }) => {
     const { skills: projectSkills } = project
     // console.log('projectSkills', projectSkills)
     // console.log('skills', skills)
@@ -59,6 +59,7 @@ function allocateContributorsInProjects(contributors, projects, skills) {
     }, { peopleAssigned: [], peopleAssignedWithSkill: {} })
 
     if (peopleAssigned.length < project.skillsNumber) {
+      notExecutedProjects.push(projectName)
       return {
         projectName,
         peopleAssigned: [],
@@ -77,6 +78,19 @@ function allocateContributorsInProjects(contributors, projects, skills) {
 
     return result
   })
+  const leftProjects = notExecutedProjects.reduce((acc, {projectName}) => {
+    const foundProject = projects.find(currentProject => currentProject.projectName === projectName)
+    if (foundProject) {
+      acc.push(foundProject)
+    }
+    return acc
+  }, [])
+  // console.log('notExecutedProjects', notExecutedProjects)
+  if (notExecutedProjects.length > 0 && Object.keys(leftProjects).length !== Object.keys(projects).length) {
+    const newAllocatedProjects = allocateContributorsInProjects(contributors, leftProjects, skills)
+    return [ ...allocateContributorsInProjectsResult, ...newAllocatedProjects ]
+  }
+  return allocateContributorsInProjectsResult
 }
 
 // 3
