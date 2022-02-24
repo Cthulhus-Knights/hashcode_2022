@@ -24,7 +24,7 @@ function parseFile(fileName) {
   const [header, otherRows] = rows
   const [contributorsNumber, projectNumber] = header.split(" ").map(value => Number(value))
   const { contributors, projectLines } = getContributors(otherRows, contributorsNumber)
-  const projects = getProjects(projectLines, projectNumber)
+  const { projects } = getProjects(projectLines, projectNumber)
   return {}
 }
 
