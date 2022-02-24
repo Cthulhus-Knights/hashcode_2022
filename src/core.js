@@ -1,9 +1,15 @@
 'use strict'
 
 function allocateProjectsInRoadmap(projects) {
-  return Object.entries(projects)
+  const aaa =  Object.entries(projects)
   .map(([projectName, project]) => { return { projectName, project } })
+  .sort((a, b) => b.project.score - a.project.score)
   .sort((a, b) => b.project.bestBefore - a.project.bestBefore)
+  .sort((a, b) => a.project.days - b.project.days)
+  .sort((a, b) => b.project.skillsNumber - a.project.skillsNumber)
+
+  // console.log('aaa', aaa)
+  return aaa
 }
 
 function levelUpContributors(
@@ -16,16 +22,16 @@ function levelUpContributors(
     */
     Object.keys(peopleAssignedWithSkill).forEach(contributor => {
       const usedSkill = peopleAssignedWithSkill[contributor]
-      console.log('project', project)
+      // console.log('project', project)
       const skillLevelRequiredByProject = project.skills.find(skill => {
-        console.log('skill', skill, usedSkill)
+        // console.log('skill', skill, usedSkill)
         return skill.name === usedSkill
       }).level
       const skillLevelOfContributor = contributors[contributor][usedSkill]
-      console.log('skillLevelRequiredByProject', skillLevelRequiredByProject)
-      console.log('skillLevelOfContributor', skillLevelOfContributor)
+      // console.log('skillLevelRequiredByProject', skillLevelRequiredByProject)
+      // console.log('skillLevelOfContributor', skillLevelOfContributor)
       if (skillLevelOfContributor <= skillLevelRequiredByProject) {
-        console.log('level upped contributors', contributors)
+        // console.log('level upped contributors', contributors)
         contributors[contributor][usedSkill] += 1
       }
     })
@@ -46,7 +52,7 @@ function allocateContributorsInProjects(contributors, projects, skills) {
       // console.log('findContributorByLevel', findContributorByLevel)
       if (findContributorByLevel && !acc.peopleAssigned.includes(findContributorByLevel)) {
         acc.peopleAssigned.push(findContributorByLevel)
-        console.log('findContributorByLevel', findContributorByLevel)
+        // console.log('findContributorByLevel', findContributorByLevel)
         acc.peopleAssignedWithSkill[findContributorByLevel] = name
       }
       return acc
@@ -67,7 +73,7 @@ function allocateContributorsInProjects(contributors, projects, skills) {
       peopleAssignedWithSkill
     }
     levelUpContributors(result, project, contributors)
-    console.log('contributors', contributors)
+    // console.log('contributors', contributors)
 
     return result
   })
@@ -84,10 +90,10 @@ function allocateContributorsInProjects(contributors, projects, skills) {
 function core(projects, contributors, skills) {
   const orderedProjects = allocateProjectsInRoadmap(projects)
   const contributorsInProjects = allocateContributorsInProjects(contributors, orderedProjects, skills)
-  console.log('contributorsInProjects', contributorsInProjects)
+  // console.log('contributorsInProjects', contributorsInProjects)
   const filteredContributorsInProjects = contributorsInProjects.filter(({ peopleAssigned }) => peopleAssigned.length > 0)
 
-  console.log('filteredContributorsInProjects', filteredContributorsInProjects)
+  // console.log('filteredContributorsInProjects', filteredContributorsInProjects)
   // filteredContributorsInProjects.map(projectEnded => {
   //   const { peopleAssignedWithSkill, projectName} = projectEnded
   //   levelUpContributors({projectName, peopleAssignedWithSkill}, projectEnded, contributors)
