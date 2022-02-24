@@ -7,6 +7,11 @@ const { get, set } = require('lodash')
 const fileParser = require('./src/fileParser')
 const { getContributors } = require('./src/getContributors')
 const { getProjects } = require('./src/getProjects')
+const {
+  allocateProjectsInRoadmap,
+  contributorsInProjects,
+  core
+} = require('./src/core')
 
 const files = [
   'a_an_example.in.txt',
@@ -16,6 +21,7 @@ const files = [
   // 'e_exceptional_skills.in.txt',
   // 'f_find_great_mentors.in.txt'
 ]
+
 
 function parseFile(fileName) {
   const { rows } = fileParser(
@@ -33,7 +39,8 @@ function parseFile(fileName) {
   console.log('otherRows', otherRows)
   console.log('contributorsNumber', contributorsNumber)
   const { contributors, projectLines } = getContributors(otherRows, contributorsNumber)
-  // const { projects } = getProjects(projectLines, projectsNumber)
+  const { projects } = getProjects(projectLines, projectsNumber)
+  const result = core(projects, contributors)
   return {}
 }
 
