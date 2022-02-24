@@ -5,7 +5,7 @@ const fs = require('fs-extra')
 const { get, set } = require('lodash')
 
 const fileParser = require('./src/fileParser')
-const getContributors = require('./src/getContributors')
+const { getContributors } = require('./src/getContributors')
 const { getProjects } = require('./src/getProjects')
 
 const files = [

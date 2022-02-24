@@ -1,26 +1,25 @@
 'use strict'
 
 function getContributors(otherRows, contributorsNumber) {
-  let contributorMap = {}
   let contributorIndex = 0
-  console.log('contributorIndex: ', contributorIndex)
-  for (let currentContributor = 0; currentContributor <= contributorsNumber; currentContributor++) {
-    const [contributorName, numberOfSkills] = otherRows[contributorIndex].split(' ')
-    contributorMap = {
-      [contributorName]: {}
-    }
+  const contributorMap = {}
+  for (let currentContributor = 0; currentContributor < contributorsNumber; currentContributor++) {
+    const [contributorName, numberOfSkills] = otherRows[contributorIndex].split(" ")
+    const numberOfSkillsAsNumber = +numberOfSkills
+    contributorMap[contributorName] = {}
 
-    for (let skillIndex = 0; skillIndex <= numberOfSkills; skillIndex++) {
-      const [skillName, skillValue] = otherRows[contributorIndex + 1 + skillIndex]
-      console.log('skill', skillName, skillValue)
-      contributorMap[contributorName][skillName] = skillValue
+    for (let skillIndex = 0; skillIndex < numberOfSkillsAsNumber; skillIndex++) {
+      const [skillName, skillValue] = otherRows[contributorIndex + 1 + skillIndex].split(" ")
+      contributorMap[contributorName][skillName] = +skillValue
     }
-    contributorIndex = contributorIndex + numberOfSkills
+    contributorIndex = contributorIndex + numberOfSkillsAsNumber + 1
   }
-  // 
+
+  const projectLines = otherRows.slice(contributorIndex)
+
   return {
-    contributors: {},
-    projectLines: {}
+    contributors: contributorMap,
+    projectLines
   }
 }
 
@@ -44,4 +43,4 @@ const testList = [
 
 console.log(JSON.stringify(getContributors(testList, 3)))
 
-module.exports = getContributors
+module.exports = { getContributors }
