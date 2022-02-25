@@ -4,9 +4,9 @@ function allocateProjectsInRoadmap(projects) {
   const aaa =  Object.entries(projects)
   .map(([projectName, project]) => { return { projectName, project } })
   .sort((a, b) => b.project.score - a.project.score)
-  .sort((a, b) => b.project.bestBefore - a.project.bestBefore)
-  .sort((a, b) => a.project.days - b.project.days)
   .sort((a, b) => b.project.skillsNumber - a.project.skillsNumber)
+  .sort((a, b) => a.project.days - b.project.days)
+  .sort((a, b) => b.project.bestBefore - a.project.bestBefore)
 
   return aaa
 }
@@ -85,8 +85,9 @@ function allocateContributorsInProjects(contributors, projects, skills) {
     }
     return acc
   }, [])
-  // console.log('notExecutedProjects', notExecutedProjects)
   if (notExecutedProjects.length > 0 && Object.keys(leftProjects).length !== Object.keys(projects).length) {
+    console.log('notExecutedProjects', notExecutedProjects)
+
     const newAllocatedProjects = allocateContributorsInProjects(contributors, leftProjects, skills)
     return [ ...allocateContributorsInProjectsResult, ...newAllocatedProjects ]
   }
