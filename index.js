@@ -11,16 +11,16 @@ const { getRowsFromResult } = require('./src/getRowsFromResult')
 const {
   allocateProjectsInRoadmap,
   contributorsInProjects,
-  core
+  core, findTeams
 } = require('./src/core')
 
 const files = [
   'a_an_example.in.txt',
-  'b_better_start_small.in.txt',
-  'c_collaboration.in.txt',
-  'd_dense_schedule.in.txt',
-  'e_exceptional_skills.in.txt',
-  'f_find_great_mentors.in.txt'
+  // 'b_better_start_small.in.txt',
+  // 'c_collaboration.in.txt',
+  // 'd_dense_schedule.in.txt',
+  // 'e_exceptional_skills.in.txt',
+  // 'f_find_great_mentors.in.txt'
 ]
 
 
@@ -36,29 +36,24 @@ function parseFile(fileName) {
   const contributorsNumber = +contributorsStringNumber
   const projectsNumber = +projectsStringNumber
   const { contributors, projectLines } = getContributors(otherRows, contributorsNumber)
-  // console.log('contributors', JSON.stringify(contributors, null, 2))
-  // console.log('projectLines', JSON.stringify(projectLines, null, 2))
-
   const projects = getProjects(projectLines, projectsNumber)
-  const skills = getSkillsFromContributors(contributors)
+  const orderedProjects = allocateProjectsInRoadmap(projects)
 
-  // console.log('projects', JSON.stringify(projects, null, 2))
-
-  const result = core(projects, contributors, skills)
+  const result = getRowsFromResult(orderedProjects, contributors)
+  // const skills = getSkillsFromContributors(contributors)
+  // const result = core(projects, contributors, skills)
   return result
 }
 
 const start = () => {
   files.forEach(fileName => {
-    // extract data from file
-    const result = parseFile(fileName)
-    
-    const rowsList = getRowsFromResult(result)
+    const rowsList = parseFile(fileName)
 
-    // put your core logic here
-
-    // save data
-    fs.outputFileSync(`./out/${fileName}.out`, rowsList.join('\n'), { encoding: 'utf-8' })
+    fs.outputFileSync(
+      `./out/${fileName}.out`, 
+      rowsList.join('\n'), 
+      { encoding: 'utf-8' }
+    )
   })
 }
 

@@ -2,11 +2,18 @@
 
 function allocateProjectsInRoadmap(projects) {
   const aaa =  Object.entries(projects)
-  .map(([projectName, project]) => { return { projectName, project } })
-  .sort((a, b) => b.project.score - a.project.score)
-  .sort((a, b) => b.project.skillsNumber - a.project.skillsNumber)
-  .sort((a, b) => a.project.days - b.project.days)
-  .sort((a, b) => b.project.bestBefore - a.project.bestBefore)
+    .map(([projectName, project]) => ({ projectName, project }))
+    // progetti in base al numero di skill
+    // .sort((a, b) => a.project.skillsNumber + b.project.skillsNumber)
+
+    // progetti con valori di punti più alto
+    .sort((a, b) => b.project.score - a.project.score)
+
+    // progetti con i giorni più bassi per essere completati
+    // .sort((a, b) => a.project.days - b.project.days)
+
+    // progetti che sarebbe meglio finire prima di tot giorni
+    .sort((a, b) => a.project.bestBefore - b.project.bestBefore)
 
   return aaa
 }
@@ -40,19 +47,13 @@ function allocateContributorsInProjects(contributors, projects, skills) {
   const notExecutedProjects = []
   const allocateContributorsInProjectsResult = projects.map(({ projectName, project }) => {
     const { skills: projectSkills } = project
-    // console.log('projectSkills', projectSkills)
-    // console.log('skills', skills)
-
     const { peopleAssigned, peopleAssignedWithSkill } = projectSkills.reduce((acc, { name, level }) => {
       const contributorsWithSkill = skills[name]
-      // console.log('contributorsWithSkill', contributorsWithSkill)
       const findContributorByLevel = contributorsWithSkill.find(c => {
         return contributors[c][name] >= level
       })
-      // console.log('findContributorByLevel', findContributorByLevel)
       if (findContributorByLevel && !acc.peopleAssigned.includes(findContributorByLevel)) {
         acc.peopleAssigned.push(findContributorByLevel)
-        // console.log('findContributorByLevel', findContributorByLevel)
         acc.peopleAssignedWithSkill[findContributorByLevel] = name
       }
       return acc
@@ -74,7 +75,6 @@ function allocateContributorsInProjects(contributors, projects, skills) {
       peopleAssignedWithSkill
     }
     levelUpContributors(result, project, contributors)
-    // console.log('contributors', contributors)
 
     return result
   })
@@ -93,14 +93,6 @@ function allocateContributorsInProjects(contributors, projects, skills) {
   }
   return allocateContributorsInProjectsResult
 }
-
-// 3
-// WebServer
-// Bob Anna
-// Logging
-// Anna
-// WebChat
-// Maria Bob
 
 function core(projects, contributors, skills) {
   const orderedProjects = allocateProjectsInRoadmap(projects)
@@ -121,34 +113,31 @@ function core(projects, contributors, skills) {
   return filteredContributorsInProjects
 }
 
+function findTeams(orderedProjects, contributors) {
+  return orderedProjects
+    .map(({projectName, project}) => {
+      const contributorsBySkill = project.skills.flatMap(({name: skillNameSerched, level}) => {
+        return Object.entries(contributors).reduce((acc, [contributorName, contributorSkills]) => {
+          if (contributorSkills[skillNameSerched] && contributorSkills[skillNameSerched] >= level) {
+            // update level of contributor after this project
+            contributors[contributorName][skillNameSerched] += 1
+            return [...acc, contributorName]
+          }
+          return acc
+        }, [])
+      })
 
-/*
-  [
-    {
-      projectName: 'webServer',
-      peopleAssigned: [
-        'Bob',
-        'Anna'
-      ]
-    },
-    {
-      projectName: 'Logging',
-      peopleAssigned: [
-        'Anna'
-      ]
-    },
-    {
-      projectName: 'webChat',
-      peopleAssigned: [
-        'Maria'
-      ]
-    }
-  ]
-*/
-
+      return {
+        projectName,
+        contributorsSelected: contributorsBySkill,
+        skillNumber: project.skillsNumber
+      }
+    })
+}
 
 module.exports = {
   core,
+  findTeams,
   allocateContributorsInProjects,
   allocateProjectsInRoadmap,
 }
